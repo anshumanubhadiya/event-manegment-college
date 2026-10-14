@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Algo India — Live Desk</title>
+    <link rel="stylesheet" href="/style.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="brand">
+        <span class="dot-live" id="conn-dot"></span>
+        <strong>Algo&nbsp;India</strong>
+        <span class="sub" id="brand-sub">index options desk</span>
+      </div>
+      <div class="pills">
+        <span class="pill mode" id="pill-mode">—</span>
+        <span class="pill" id="pill-symbol">—</span>
+        <span class="pill" id="pill-broker">—</span>
+        <span class="pill" id="pill-ai">AI off</span>
+        <span class="pill" id="pill-clock">--:--:--</span>
+        <span class="pill" id="pill-market">—</span>
+      </div>
+      <div class="controls">
+        <button id="btn-pause" class="btn ghost">Pause</button>
+        <button id="btn-square" class="btn danger">Square off</button>
+        <button id="btn-backtest" class="btn">Backtest (60d)</button>
+      </div>
+    </header>
+
+    <main>
+      <section class="stats" id="stats"></section>
+
+      <section class="grid">
+        <div class="col">
+          <div class="card">
+            <div class="card-head">
+              <h2>Equity curve</h2>
+              <span class="hint" id="curve-hint">closed trades ke baad update hota hai</span>
+            </div>
+            <canvas id="curve" height="150"></canvas>
+          </div>
+
+          <div class="card" id="position-card">
+            <div class="card-head">
+              <h2>Position</h2>
+              <span class="hint" id="pos-hint">flat hai — naya signal ka wait</span>
+            </div>
+            <div id="position-body" class="empty">Koi position nahi. Engine entry ka wait kar raha hai…</div>
+          </div>
+
+          <div class="card two">
+            <div>
+              <div class="card-head"><h2>Last signal</h2></div>
+              <div id="signal-body" class="kv empty">—</div>
+            </div>
+            <div>
+              <div class="card-head"><h2>AI decision</h2><span class="hint" id="ai-mode-hint"></span></div>
+              <div id="ai-body" class="kv empty">AI off hai (AI_MODE=off)</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col">
+          <div class="card">
+            <div class="card-head"><h2>Risk</h2><span class="hint">engine ka brake</span></div>
+            <div id="risk-body" class="kv">—</div>
+          </div>
+
+          <div class="card">
+            <div class="card-head"><h2>Live feed</h2><span class="hint">last 60 events</span></div>
+            <div id="feed" class="feed"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="card-head">
+          <h2>Trades</h2>
+          <span class="hint" id="trades-hint">data/trades.csv me sab kuch save hota hai</span>
+        </div>
+        <div class="table-wrap">
+          <table id="trades">
+            <thead>
+              <tr>
+                <th>#</th><th>Time</th><th>Leg</th><th>Qty</th><th>Entry ₹</th><th>Exit ₹</th>
+                <th>Index</th><th>Gross</th><th>Charges</th><th>Net</th><th>Hold</th><th>Reason</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="card" id="backtest-card" hidden>
+        <div class="card-head"><h2>Backtest</h2><span class="hint">Python engine (py/algo) se</span></div>
+        <pre id="backtest-out"></pre>
+      </section>
+    </main>
+
+    <footer>
+      <span>Ye ek algo trading framework hai — trading me risk hai, pehle paper mode me chalao.</span>
+      <span id="footer-meta"></span>
+    </footer>
+
+    <script src="/app.js"></script>
+  </body>
+</html>
