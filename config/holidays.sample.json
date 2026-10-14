@@ -1,0 +1,5 @@
+{
+  "note": "Sample — isko config/holidays.json bana ke apne broker calendar se dates update karo. Weekend (Sat/Sun) engine khud handle karta hai.",
+  "source": "sample",
+  "dates": ["2026-01-26", "2026-03-04"]
+}

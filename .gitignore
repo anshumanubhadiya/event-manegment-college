@@ -1,0 +1,27 @@
+# --- dependencies ---
+node_modules/
+
+# --- python ---
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# --- runtime data (journals, trades, session files) ---
+data/
+out/
+logs/
+*.log
+
+# --- secrets ---
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+KILL
+
+# --- editor/os ---
+.DS_Store
+.idea/
+.vscode/
