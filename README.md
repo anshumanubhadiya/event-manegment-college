@@ -9,7 +9,7 @@ brokers aur F&O segment ke liye.
 | Layer | Tech | Kaam |
 |---|---|---|
 | Strategy + backtest | **Python** (zero deps, pure stdlib) | strategies likhna, backtest, metrics |
-| Live engine + dashboard | **TypeScript** (Node 22, zero runtime deps) | tick loop, risk, orders, journal, web dashboard |
+| Live engine + dashboard | **TypeScript** (Node 22, zero runtime deps) | tick loop, risk, orders, journal, SSE dashboard |
 | AI layer | TS (OpenAI / Anthropic / Google / OpenAI-compatible) | signal validate ya decide karna |
 | Brokers | TS adapters | Zerodha, Angel One, Fyers, Upstox, Dhan + Paper |
 
@@ -21,7 +21,8 @@ brokers aur F&O segment ke liye.
 npm install                # dev deps (tsx + typescript) — runtime me kuch nahi chahiye
 
 npm run demo               # synthetic data + paper broker — sabse pehle yahi chalao
-# dashboard: http://localhost:8788
+# → http://localhost:8788  pe dashboard khul jayega (SSE live)
+# demo me 1 real second = 1 virtual minute, din khatam hone pe agla din apne aap
 ```
 
 Doosre modes:
@@ -29,8 +30,15 @@ Doosre modes:
 ```bash
 npm run paper              # asli broker ka live data, orders simulate (BROKER=zerodha ...)
 npm run live               # REAL orders — paisa lagta hai, sambhal ke
-npm test                   # TS engine self-tests (~30 tests)
+npm test                   # TS engine self-tests (49 tests)
 npm run py:test            # Python strategies + backtest tests (36 tests)
+```
+
+Speed/strategy badalni ho:
+
+```bash
+tsx src/index.ts --mode demo --speed 300 --strategy ema_cross --ai veto
+tsx src/index.ts --help    # saare flags
 ```
 
 ### Python side (strategies + backtest)

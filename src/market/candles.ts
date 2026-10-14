@@ -64,7 +64,7 @@ export class CandleStore {
     const key = istParts(ts).dateKey;
     if (key !== this.session) {
       if (this.session) this.prevClose = this.lastClose();
-      this.reset(key, ts);
+      this.reset(key);
     }
     if (!this.dayOpen) this.dayOpen = price;
     for (const tf of this.timeframes) {
@@ -87,14 +87,13 @@ export class CandleStore {
     }
   }
 
-  private reset(key: string, ts: number): void {
+  private reset(key: string): void {
     this.session = key;
     for (const tf of this.timeframes) {
       this.bars.set(tf, []);
       this.current.delete(tf);
     }
     this.dayOpen = 0;
-    void ts;
   }
 
   /** Closed bars + current forming bar (agar ho). */
@@ -139,8 +138,6 @@ export class CandleStore {
 
   /** Session ka opening range (pehle N minute). */
   openingRange(minutes: number): { high: number; low: number; complete: boolean } | undefined {
-    const p = istParts(Date.now());
-    void p;
     const bars = this.series("1m");
     if (!bars.length) return undefined;
     const startTs = sessionStartMs(bars[0]!.ts);

@@ -33,7 +33,9 @@ export function mockEvaluate(q: AiQuestion): AiDecision {
   const trendStrength = adx === null ? 0 : clamp((adx - 15) / 25, 0, 1); // ADX 15→0, 40→1
   const momScore = clamp(momentum / 0.15, -1, 1); // ±0.15% 5m move = full score
   const atrPct = ltp && atr ? (atr / ltp) * 100 : 0;
-  const alive = atrPct > 0.02; // bilkul dead tape
+  // ATR na mile (session ke shuru me) to "dead tape" maan ke sab block karna galat hai —
+  // tab decide momentum/VWAP se karo, ATR sirf confirmation ke liye.
+  const alive = atrPct === 0 ? true : atrPct > 0.02;
 
   // blended directional score
   let score = 0.45 * momScore + (aboveVwap === null ? 0 : aboveVwap ? 0.25 : -0.25) + 0.15 * trendStrength * Math.sign(momScore || 1);

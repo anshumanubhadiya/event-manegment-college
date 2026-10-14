@@ -242,10 +242,14 @@ export function isExpiryDay(symbol: string, ts: number): boolean {
 }
 
 /** Expiry ke din ka time-based lot reduce (expiry day pe risk kam karo). */
-export function expiryDayLotFactor(ts: number): number {
+/**
+ * Expiry day ka size factor. Expiry ke din 14:00 ke baad gamma/theta bahut tez
+ * hota hai — lots aadhe kar dete hain (baaki din 1.0).
+ */
+export function expiryDayLotFactor(symbol: string, ts: number): number {
+  if (!isExpiryDay(symbol, ts)) return 1;
   const p = istParts(ts);
-  if (p.minuteOfDay >= 14 * 60) return 0.5;
-  return 1;
+  return p.minuteOfDay >= 14 * 60 ? 0.5 : 1;
 }
 
 export function parseNoTradeTime(): number {

@@ -89,8 +89,8 @@ export function orderCharges(input: ChargeInput): ChargeBreakdown {
   } else if (input.segment === "equity_intraday") {
     brokerage = Math.min(spec.pct * turnover, spec.cap);
   } else {
-    brokerage = Math.min(spec.flat, Math.max(spec.pct * turnover, 0)) || spec.flat;
-    // flat ₹20 — percent wala sirf tab jab cap se kam ho (broker rule)
+    // F&O rule: flat ₹20 per order (Zerodha/Angel/Fyers sab yahi lagate hain).
+    // Percent-based sirf equity intraday me hota hai (upar wala branch).
     brokerage = spec.flat;
   }
 

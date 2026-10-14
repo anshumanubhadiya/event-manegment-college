@@ -1,29 +1,27 @@
 # --- dependencies ---
 node_modules/
+
+# --- python ---
 __pycache__/
 *.py[cod]
+.venv/
+venv/
 
-# --- secrets (KABHI commit nahi) ---
+# --- runtime data (journals, trades, session files) ---
+data/
+out/
+logs/
+*.log
+
+# --- secrets ---
 .env
 .env.*
 !.env.example
 *.pem
 *.key
-
-# --- runtime data (journals, trades, logs) ---
-data/
-logs/
-*.log
 KILL
 
-# --- build output ---
-dist/
-build/
-.venv/
-venv/
-
-# --- editor/OS ---
+# --- editor/os ---
 .DS_Store
 .idea/
 .vscode/
-out/

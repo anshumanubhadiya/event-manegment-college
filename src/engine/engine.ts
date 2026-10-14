@@ -21,7 +21,7 @@ import { round2, istParts } from "../util.ts";
 import type { Clock } from "../market/clock.ts";
 import { marketStatus, shouldSquareOff, withinEntryWindow, isTradingDay } from "../market/calendar.ts";
 import { CandleStore } from "../market/candles.ts";
-import { adx, atr, closes, highs, last, lows, supertrend, vwap, vwapBands, ema, rsi } from "../market/indicators.ts";
+import { adx, atr, closes, highs, last, lows, supertrend, vwap, vwapBands } from "../market/indicators.ts";
 import { atmStrike, expiryDayLotFactor, indexMeta, nextExpiry, strikeFor } from "../market/instruments.ts";
 import { deltaAt, estimatePremium, legAdjustment } from "../market/options.ts";
 import type { Feed, OptionRef, Quote } from "../market/feed.ts";
@@ -318,7 +318,7 @@ export class Engine {
     }
 
     // expiry day pe lots kam karo (gamma risk)
-    const factor = expiryDayLotFactor(now);
+    const factor = expiryDayLotFactor(index, now);
     const lots = Math.max(1, Math.floor(sizing.lots * factor));
     const qty = lots * meta.lotSize;
 
@@ -790,17 +790,20 @@ export class Engine {
     const day = istParts(now).dateKey;
     if (!force && this.summaryWrittenFor === day) return; // ek din me ek hi summary
     this.summaryWrittenFor = day;
-    const trades = this.deps.journal.trades;
+    const allTrades = this.deps.journal.trades;
+    // din ke counters (wins/losses har naye din reset hote hain) — journal.trades
+    // cumulative hoti hai, isliye usse din ka count mat lo (warna stale number aata hai)
+    const dayTrades = this.wins + this.losses;
     const net = round2(this.grossTotal - this.chargesTotal);
     const summary = {
       date: day,
       mode: config.mode,
       broker: this.deps.broker.name,
       strategy: this.deps.strategy.activeName,
-      trades: trades.length,
+      trades: dayTrades,
       wins: this.wins,
       losses: this.losses,
-      winRate: trades.length ? round2((this.wins / trades.length) * 100) : 0,
+      winRate: dayTrades ? round2((this.wins / dayTrades) * 100) : 0,
       gross: round2(this.grossTotal),
       charges: round2(this.chargesTotal),
       net,
@@ -810,7 +813,7 @@ export class Engine {
       haltReason: this.risk.state.haltReason,
     };
     this.deps.journal.writeDailySummary(summary);
-    this.deps.journal.sessionSnapshot(day, { summary, trades: trades.slice(-50), snapshot: this.snapshot() });
+    this.deps.journal.sessionSnapshot(day, { summary, trades: allTrades.slice(-50), snapshot: this.snapshot() });
     this.deps.emit("daySummary", summary);
     console.log(
       `\n  DAY SUMMARY ${day}: ${summary.trades} trades · ${summary.wins}W/${summary.losses}L · net ₹${net.toFixed(0)} · charges ₹${summary.charges.toFixed(0)} · equity ₹${summary.equityEnd.toFixed(0)}`,
@@ -871,9 +874,6 @@ export class Engine {
     return isTradingDay(this.deps.clock.now());
   }
 }
-
-void ema;
-void rsi;
 
 function gatedAi(signal: Signal): AiOutcome | undefined {
   const meta = signal.meta?.["ai"];

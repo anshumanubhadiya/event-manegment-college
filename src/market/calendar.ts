@@ -73,7 +73,7 @@ export function marketStatus(ts: number): MarketStatus {
   const tradingDay = !weekend && !holiday;
   const mod = p.minuteOfDay;
   const pre = mod < SESSION.open;
-  const post = mod > SESSION.close;
+  const post = mod >= SESSION.close; // 15:30 se band (ya uske baad)
   const open = tradingDay && !pre && !post;
 
   let phase: SessionPhase = "closed";

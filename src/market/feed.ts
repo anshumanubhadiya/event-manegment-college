@@ -219,7 +219,6 @@ export class SyntheticFeed implements Feed {
     const q = this.quoteNow(this.index);
     this.lastTs = now;
     for (const cb of this.listeners) cb(q);
-    void sleep;
   }
 }
 

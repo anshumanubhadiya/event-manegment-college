@@ -174,28 +174,26 @@ export function supertrend(
   const a = atr(highs, lows, closes, period);
   const up: boolean[] = new Array(n).fill(false);
   const line: (number | null)[] = new Array(n).fill(null);
-  let prevUpper = 0;
-  let prevLower = 0;
-  let prevDir = 1;
+  const finalUpper: number[] = new Array(n).fill(0);
+  const finalLower: number[] = new Array(n).fill(0);
+  let prevUp = true;
   for (let i = 0; i < n; i++) {
     const av = a[i];
-    if (av === null) continue;
-    const hl2 = (highs[i]! + lows[i]!) / 2;
-    let upper = hl2 + mult * av;
-    let lower = hl2 - mult * av;
-    if (i > 0) {
-      upper = closes[i - 1]! > prevUpper ? Math.max(upper, prevUpper) : upper;
-      lower = closes[i - 1]! < prevLower ? Math.min(lower, prevLower) : lower;
+    if (av === null || av === undefined) continue;
+    const mid = (highs[i]! + lows[i]!) / 2;
+    const upper = mid + mult * av;
+    const lower = mid - mult * av;
+    if (i === 0 || line[i - 1] === null) {
+      finalUpper[i] = upper;
+      finalLower[i] = lower;
+      prevUp = closes[i]! >= mid;
+    } else {
+      finalUpper[i] = closes[i - 1]! <= finalUpper[i - 1]! ? Math.min(upper, finalUpper[i - 1]!) : upper;
+      finalLower[i] = closes[i - 1]! >= finalLower[i - 1]! ? Math.max(lower, finalLower[i - 1]!) : lower;
+      prevUp = prevUp ? closes[i]! >= finalLower[i]! : closes[i]! > finalUpper[i]!;
     }
-    let dir: number;
-    if (i === 0) dir = closes[i]! >= hl2 ? 1 : -1;
-    else if (prevDir === 1) dir = closes[i]! < lower ? -1 : 1;
-    else dir = closes[i]! > upper ? 1 : -1;
-    up[i] = dir === 1;
-    line[i] = dir === 1 ? lower : upper;
-    prevUpper = upper;
-    prevLower = lower;
-    prevDir = dir;
+    up[i] = prevUp;
+    line[i] = prevUp ? finalLower[i]! : finalUpper[i]!;
   }
   return { up, line };
 }

@@ -153,6 +153,10 @@ export class RiskManager {
     } else {
       s.consecutiveLosses = 0;
     }
+    if (s.consecutiveLosses >= config.risk.maxConsecLosses) {
+      s.halted = true;
+      s.haltReason = `${s.consecutiveLosses} lagatar loss`;
+    }
     const dailyLossLimit = -(this.capital * config.risk.dailyLossPct) / 100;
     if (s.realizedToday <= dailyLossLimit) {
       s.halted = true;
